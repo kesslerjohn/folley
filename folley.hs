@@ -5,9 +5,6 @@ import Data.Char
 import Control.Applicative
 import GHC.Natural
 
--- >>>:t Natural
--- Data constructor not in scope: Natural
-
 -- TODO: How to get values into here? 
 -- parametrize this type or use a specific var data type?
 
@@ -17,7 +14,7 @@ import GHC.Natural
 -- TODO: Is it possible to simplify connectives? I'd like to have intermediate 
 -- representations of &, |, =>, ~, < that are easy to operate on
 -- actually can just push these into the Haskell implementations, but
--- do need some way to simplify and track formulae
+-- do need some way to simplify and track formulae with free variables
 
 data FOLFormula 
     = Conj FOLFormula FOLFormula
@@ -79,12 +76,6 @@ folBool = f <$> (stringP "T" <|> stringP "F")
             f "F" = FOLBool False
             f _ = undefined
 
-conj :: Parser FOLFormula
-conj = f <$> stringP "&"
-        where
-            f "&" = undefined
-            f _   = undefined
-
 folReader :: Maybe (String, FOLFormula) -> Maybe (String, FOLFormula)
 folReader input = undefined
 
@@ -96,17 +87,17 @@ isVarChar c = 95 <= ord c && 122 >= ord c
 -- I want to take a conjunction of two variable names and make a Conj a b with them
 -- so if I:
 
-folConj :: (String, String) -> Maybe (String, FOLFormula)
-folConj ("", _) = Nothing
-folConj (a, b) = case span (== '&') b of 
+conj :: (String, String) -> Maybe (String, FOLFormula)
+conj ("", _) = Nothing
+conj (a, b) = case span (== '&') b of 
     ("&", str) ->  Just ("", Conj (Var a) (Var str))
     _ -> Nothing
 
--- >>> ord '_'
--- 95
+folConj :: String -> Maybe (String, FOLFormula)
+folConj s = conj $ span isVarChar s
 
--- >>> folConj $ span isVarChar "var_one&var_two"
--- Just ("",Conj (Var "varone") (Var "vartwo"))
+-- >>> folConj "one&var_two"
+-- Just ("",Conj (Var "one") (Var "var_two"))
 
 a = Just ("&b", Var "a")
 
