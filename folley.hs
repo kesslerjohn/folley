@@ -87,6 +87,18 @@ isVarChar c = 95 <= ord c && 122 >= ord c
 -- I want to take a conjunction of two variable names and make a Conj a b with them
 -- so if I:
 
+spanP :: (Char -> Bool) -> Parser String
+spanP f = 
+    Parser $ \ input -> 
+        let (token, rest) = span f input in 
+            Just (rest, token)
+
+folVar = f <$> spanP isVarChar where
+    f s = Var s
+
+-- >>> runParser folVar "one&two"
+-- Just ("&two",Var "one")
+
 conj :: (String, String) -> Maybe (String, FOLFormula)
 conj ("", _) = Nothing
 conj (a, b) = case span (== '&') b of 
