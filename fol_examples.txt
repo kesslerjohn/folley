@@ -1,0 +1,24 @@
+Here I am including information on how I imagine the string encoding of
+FOL that folley will be able to parse. I will lay down some basic structure and 
+then give a few examples.
+
+Sorts:
+a, b, c, ... -- bool
+u, v, w, ... -- nat
+P, Q, R, ... -- (A -> bool) i.e. predicates
+f, g, h, ... -- (nat -> nat) i.e. arithmetic operations
+
+Sorted terms/Quantifiers: (I think sorting will only occur with quantifiers)
+x:A -- variable named x of sort A
+\Ay:B -- for all vars y of type B 
+\Ez:A->B -- there exists a var Z of type A->B 
+
+Connectives: (constructors for predicates)
+a & b                -- conjunction of two bool vars
+P(x) & Q(x)          -- conjunction of two predicates
+a | b                -- disj of two bools
+P(x) | Q(x)          -- disj of two predicates
+a -> b, P(x) -> Q(x) -- implication
+a <> b, P(x) <> Q(x) -- logical equivalence
+~a, ~P(x)            -- negation
+u <= v, f(u) <= g(u) -- less than or equal
