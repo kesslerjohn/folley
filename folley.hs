@@ -19,8 +19,8 @@ import GHC.Natural
 data FOLFormula 
     = Conj FOLFormula FOLFormula
     | Not FOLFormula
-    | All (FOLFormula, FOLFormula)
-    | Ex (FOLFormula, FOLFormula)
+    | All
+    | Ex
     | FOLNat Natural
     | FOLBool Bool
     | Var String
@@ -96,8 +96,15 @@ spanP f =
 folVar = f <$> spanP isVarChar where
     f s = Var s
 
--- >>> runParser folVar "one&two"
--- Just ("&two",Var "one")
+folQuantifier :: Parser FOLFormula
+folQuantifier = f <$> (stringP "A" <|> stringP "E") where
+    f "A" = All
+    f "E" = Ex
+    f _ = undefined
+
+
+-- >>> runParser folQuantifier "Ax:T.P(x)"
+-- Just ("x:T.P(x)",All)
 
 conj :: (String, String) -> Maybe (String, FOLFormula)
 conj ("", _) = Nothing
