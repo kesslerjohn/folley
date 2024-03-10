@@ -93,6 +93,7 @@ spanP f =
         let (token, rest) = span f input in 
             Just (rest, token)
 
+folVar :: Parser FOLFormula
 folVar = f <$> spanP isVarChar where
     f s = Var s
 
